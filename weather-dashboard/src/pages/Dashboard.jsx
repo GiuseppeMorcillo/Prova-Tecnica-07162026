@@ -5,32 +5,52 @@ import "./Dashboard.css";
 function Dashboard() {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     function getWeather() {
         setLoading(true);
+        setError("");
 
         fetch(
             "https://api.open-meteo.com/v1/forecast?latitude=45.314&longitude=9.503&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FRome"
         )
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Errore nel recupero del meteo");
+                }
+
+                return response.json();
+            })
             .then((data) => {
                 setWeather(data);
-                //console.log(data)
-                setLoading(false);
             })
             .catch((error) => {
                 console.error("Errore:", error);
+                setError("Impossibile caricare i dati meteo.");
+            })
+            .finally(() => {
                 setLoading(false);
             });
     }
     useEffect(() => {
         getWeather();
     }, []);
-    function formatDate(date) {
-        return new Date(date).toLocaleDateString("it-IT");
-    }
+
     if (loading) {
         return <h2>Caricamento...</h2>;
+    }
+
+    if (error) {
+        return (
+            <div className="error-message">
+                <p>{error}</p>
+                <button onClick={getWeather}>Riprova</button>
+            </div>
+        );
+    }
+
+    if (!weather) {
+        return null;
     }
 
     const currentWeather =
