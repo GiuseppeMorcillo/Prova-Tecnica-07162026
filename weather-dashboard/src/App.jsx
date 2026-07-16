@@ -1,12 +1,17 @@
-import './App.css'
-
+import { BrowserRouter, Routes, Route} from "react-router-dom"
+import Dashboard from "../pages/Dashboard";
+import Settings from "../pages/Settings";
+import Navbar from "../components/Navbar";
+import './App.css';
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-     return <h1> Weather Dashboard </h1>
-    </>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Dashboard/>} />
+        <Route path="/settings" element={<Settings/>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
